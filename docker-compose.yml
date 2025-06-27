@@ -1,0 +1,38 @@
+services:
+  ollama:
+    image: ollama-offline:latest
+    container_name: ollama_airgapped
+    volumes:
+      - ollama_models:/root/.ollama/models
+    networks:
+      - ollama_isolated
+    restart: unless-stopped
+    command: ["ollama", "serve"]
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+
+  proxy:
+    image: nginx:alpine
+    container_name: ollama_proxy
+    ports:
+      - 11434:11434
+    networks:
+      - standard_network
+      - ollama_isolated
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_models:
+
+networks:
+  standard_network:
+    driver: bridge
+    internal: false
+  ollama_isolated:
+    driver: bridge
+    internal: true
+
+
