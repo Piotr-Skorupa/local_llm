@@ -24,7 +24,18 @@ flowchart TD
 
 ## Initialization Steps
 
-### 1. Install Ollama Locally (on your host)
+### 1. Build the Ollama-Offline Docker Image
+If you want to build the Docker image yourself (instead of using a prebuilt one), run the following command from your project directory (where the Dockerfile is located):
+
+```sh
+docker build -t ollama-offline .
+```
+
+This will create a Docker image named `ollama-offline` using the provided Dockerfile.
+
+> **Note:** You only need to build the image once, unless you make changes to the Dockerfile.
+
+### 2. Install Ollama Locally (on your host)
 - Download and install Ollama from [https://ollama.com/download](https://ollama.com/download) for your OS.
 - Use Ollama to download the models you want, for example:
   ```sh
@@ -32,7 +43,7 @@ flowchart TD
   ollama pull deepseek-coder
   ```
 
-### 2. Locate Your Local Ollama Models Directory
+### 3. Locate Your Local Ollama Models Directory
 - **Linux/macOS:**
   - `~/.ollama/models`
 - **Windows:**
@@ -49,7 +60,7 @@ flowchart TD
 >   ```
 > - On Windows, quit Ollama from the system tray or Task Manager.
 
-### 3. Find the Docker Volume Mountpoint
+### 4. Find the Docker Volume Mountpoint
 - Run the following command to get the path to the Docker volume used by the container
   Your dir name is the first part of volume name (in example project dir is "local_llm" -> "dir_name_volume_name")
   Example:
@@ -61,7 +72,7 @@ flowchart TD
   "Mountpoint": "/var/lib/docker/volumes/local_llm_ollama_models/_data"
   ```
 
-### 4. Copy Your Downloaded Models to the Docker Volume
+### 5. Copy Your Downloaded Models to the Docker Volume
 - Copy all contents from your local models directory to the Docker volume mountpoint. For example:
   ```sh
   # On Linux/macOS (adjust paths as needed)
@@ -70,7 +81,7 @@ flowchart TD
   Copy-Item "$env:USERPROFILE\.ollama\models\*" \\wsl$\docker-desktop-data\version-pack-data\community\docker\volumes\local_llm_ollama_models\_data\ -Recurse
   ```
 
-### 5. Start the Ollama Container
+### 6. Start the Ollama Container
 - From your project directory:
   ```sh
   docker compose up -d
